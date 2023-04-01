@@ -1,7 +1,7 @@
 #include "mainwindow.h"
+#include <QTimer>
 #include "./ui_mainwindow.h"
 #include "QtWidgets/qtextbrowser.h"
-#include <thread>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -38,14 +38,24 @@ void MainWindow::processInput(const QString &inputText)
 
 void MainWindow::startGame()
 {
+    outputArea->clear();
     typeText("Hello and welcome!", outputArea);
 }
 
 void MainWindow::typeText(const QString &txt, QTextBrowser *output)
 {
-    output->clear();
+    QTimer *timer = new QTimer(this);
+    int currentIndex = 0;
 
-    for (const QChar &character : txt) {
-        output->insertPlainText(character);
-    }
+    connect(timer, &QTimer::timeout, this, [=]() mutable {
+        if (currentIndex < txt.size()) {
+            output->insertPlainText(txt[currentIndex]);
+            currentIndex++;
+            timer->start(50); // delay in milliseconds
+        } else {
+            timer->deleteLater();
+        }
+    });
+
+    timer->start(50); // start the timer
 }
