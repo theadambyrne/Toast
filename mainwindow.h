@@ -4,6 +4,7 @@
 #include <QLineEdit>
 #include <QMainWindow>
 #include <QTextEdit>
+#include <qtextbrowser.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,11 +20,12 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QTextEdit *outputArea;
+    QTextBrowser *outputArea;
     QLineEdit *commandArea;
 
     void handleInput();
     void startGame();
     void processInput(const QString &inputText);
+    void typeText(const QString &txt, QTextBrowser *output);
 };
 #endif // MAINWINDOW_H

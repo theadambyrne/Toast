@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "QtWidgets/qtextbrowser.h"
+#include <thread>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -8,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     this->setWindowTitle("Toast");
 
-    outputArea = findChild<QTextEdit *>("outputArea");
+    outputArea = findChild<QTextBrowser *>("outputArea");
     commandArea = findChild<QLineEdit *>("commandArea");
     connect(commandArea, &QLineEdit::returnPressed, this, &MainWindow::handleInput);
 }
@@ -30,11 +32,20 @@ void MainWindow::processInput(const QString &inputText)
     if (inputText == "start") {
         startGame();
     } else {
-        // Handle other input commands...
+        typeText(inputText, outputArea);
     }
 }
 
 void MainWindow::startGame()
 {
-    outputArea->clear();
+    typeText("Hello and welcome!", outputArea);
+}
+
+void MainWindow::typeText(const QString &txt, QTextBrowser *output)
+{
+    output->clear();
+
+    for (const QChar &character : txt) {
+        output->insertPlainText(character);
+    }
 }
