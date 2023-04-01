@@ -1,7 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QLineEdit>
 #include <QMainWindow>
+#include <QTextEdit>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -15,12 +17,13 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private slots:
-    void on_pushButton_clicked();
-
-    void on_lineEdit_textChanged(const QString &arg1);
-
 private:
     Ui::MainWindow *ui;
+    QTextEdit *outputArea;
+    QLineEdit *commandArea;
+
+    void handleInput();
+    void startGame();
+    void processInput(const QString &inputText);
 };
 #endif // MAINWINDOW_H
