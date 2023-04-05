@@ -1,25 +1,22 @@
+#include <QTimer>
 #include <iostream>
+#include <thread>
 
 using namespace std;
 #include "ZorkUL.h"
 
-int main(int argc, char *argv[])
+ZorkUL::ZorkUL()
 {
-    ZorkUL temp;
-	temp.play();
-	return 0;
+    createRooms();
 }
 
-ZorkUL::ZorkUL() {
-	createRooms();
-}
+void ZorkUL::createRooms()
+{
+    Room *a, *b, *c, *d, *e, *f, *g, *h, *i;
 
-void ZorkUL::createRooms()  {
-	Room *a, *b, *c, *d, *e, *f, *g, *h, *i;
-
-	a = new Room("a");
-        a->addItem(new Item("x", 1, 11));
-        a->addItem(new Item("y", 2, 22));
+    a = new Room("a");
+    a->addItem(new Item("x", 1, 11));
+    a->addItem(new Item("y", 2, 22));
 	b = new Room("b");
         b->addItem(new Item("xx", 3, 33));
         b->addItem(new Item("yy", 4, 44));
@@ -42,37 +39,32 @@ void ZorkUL::createRooms()  {
 	h->setExits(NULL, f, NULL, NULL);
     i->setExits(NULL, d, NULL, NULL);
 
-        currentRoom = a;
+    currentRoom = a;
+    running = false;
 }
 
 /**
  *  Main play routine.  Loops until end of play.
  */
-void ZorkUL::play() {
-	printWelcome();
-
-	// Enter the main command loop.  Here we repeatedly read commands and
-	// execute them until the ZorkUL game is over.
-
-	bool finished = false;
-	while (!finished) {
-		// Create pointer to command and give it a command.
-		Command* command = parser.getCommand();
-		// Pass dereferenced command and check for end of game.
-		finished = processCommand(*command);
-		// Free the memory allocated by "parser.getCommand()"
-		//   with ("return new Command(...)")
-		delete command;
-	}
-	cout << endl;
-	cout << "end" << endl;
+void ZorkUL::play(QTextBrowser *output)
+{
+    running = true;
+    printWelcome(output);
 }
 
-void ZorkUL::printWelcome() {
-	cout << "start"<< endl;
-	cout << "info for help"<< endl;
-	cout << endl;
-	cout << currentRoom->longDescription() << endl;
+void ZorkUL::printWelcome(QTextBrowser *output)
+{
+    printMessage(output, QString::fromStdString("\n" + currentRoom->longDescription()));
+}
+
+void ZorkUL::printMessage(QTextBrowser *output, const QString &txt)
+{
+    output->append("");
+    for (const QChar &c : txt) {
+        output->insertPlainText(c);
+        output->moveCursor(QTextCursor::End);
+    }
+    output->append("");
 }
 
 /**
@@ -80,54 +72,54 @@ void ZorkUL::printWelcome() {
  * If this command ends the ZorkUL game, true is returned, otherwise false is
  * returned.
  */
-bool ZorkUL::processCommand(Command command) {
-	if (command.isUnknown()) {
-		cout << "invalid input"<< endl;
-		return false;
-	}
-
-	string commandWord = command.getCommandWord();
-	if (commandWord.compare("info") == 0)
-		printHelp();
-
-	else if (commandWord.compare("map") == 0)
-		{
-        cout << "[h] --- [f] --- [g]" << endl;
-		cout << "         |         " << endl;
-        cout << "         |         " << endl;
-		cout << "[c] --- [a] --- [b]" << endl;
-		cout << "         |         " << endl;
-		cout << "         |         " << endl;
-		cout << "[i] --- [d] --- [e]" << endl;
-		}
-
-	else if (commandWord.compare("go") == 0)
-		goRoom(command);
-
-    else if (commandWord.compare("take") == 0)
-    {
-       	if (!command.hasSecondWord()) {
-		cout << "incomplete input"<< endl;
+bool ZorkUL::processCommand(Command command, QTextBrowser *output)
+{
+        if (command.isUnknown()) {
+            printMessage(output, "Invalid input");
+            return false;
         }
-        else
-         if (command.hasSecondWord()) {
-        cout << "you're trying to take " + command.getSecondWord() << endl;
-        int location = currentRoom->isItemInRoom(command.getSecondWord());
-        if (location  < 0 )
-            cout << "item is not in room" << endl;
-        else
-            cout << "item is in room" << endl;
-            cout << "index number " << + location << endl;
-            cout << endl;
-            cout << currentRoom->longDescription() << endl;
+
+        string commandWord = command.getCommandWord();
+
+        if (commandWord.compare("info") == 0)
+            printMessage(output, "INFO TODO");
+        //            printHelp();
+
+        else if (commandWord.compare("map") == 0) {
+            printMessage(output,
+                         "[h] --- [f] --- [g]\n"
+                         "         |         \n"
+                         "         |         \n"
+                         "[c] --- [a] --- [b]\n"
+                         "         |         \n"
+                         "         |         \n"
+                         "[i] --- [d] --- [e]");
         }
-    }
 
-    else if (commandWord.compare("put") == 0)
-    {
+        else if (commandWord.compare("go") == 0)
+            printMessage(output, QString::fromStdString(goRoom(command)));
 
-    }
-    /*
+        else if (commandWord.compare("take") == 0) {
+            if (!command.hasSecondWord()) {
+                printMessage(output, "incomplete input");
+            } else if (command.hasSecondWord()) {
+                printMessage(output,
+                             QString::fromStdString("you're trying to take "
+                                                    + command.getSecondWord()));
+                int location = currentRoom->isItemInRoom(command.getSecondWord());
+                if (location < 0)
+                    printMessage(output, QString::fromStdString("Item is not in room"));
+                else
+                    printMessage(output, QString::fromStdString("Item is in room"));
+
+                printMessage(output, QString::fromStdString(&"Number "[location]));
+                printMessage(output, QString::fromStdString(currentRoom->longDescription()));
+            }
+        }
+
+        else if (commandWord.compare("put") == 0) {
+        }
+        /*
     {
     if (!command.hasSecondWord()) {
 		cout << "incomplete input"<< endl;
@@ -139,50 +131,52 @@ bool ZorkUL::processCommand(Command command) {
         }
     }
 */
-    else if (commandWord.compare("quit") == 0) {
-		if (command.hasSecondWord())
-			cout << "overdefined input"<< endl;
-		else
-			return true; /**signal to quit*/
-	}
-	return false;
+        else if (commandWord.compare("quit") == 0) {
+            if (command.hasSecondWord())
+                printMessage(output, QString::fromStdString("Overdefined Input"));
+            else
+                printMessage(output, "Quiting game");
+            this->running = false;
+            return true; /**signal to quit*/
+        }
+        return false;
 }
 /** COMMANDS **/
-void ZorkUL::printHelp() {
-	cout << "valid inputs are; " << endl;
-	parser.showCommands();
+//void ZorkUL::printHelp() {
+//        for (const auto &str : parser.showCommands()) {
+//            printMessage(output, )
+//        }
+//}
 
+string ZorkUL::goRoom(Command command)
+{
+        if (!command.hasSecondWord()) {
+            return "incomplete input";
+        }
+
+        string direction = command.getSecondWord();
+
+        // Try to leave current room.
+        Room *nextRoom = currentRoom->nextRoom(direction);
+
+        if (nextRoom == NULL)
+            return "underdefined input";
+        else {
+            currentRoom = nextRoom;
+            return currentRoom->longDescription();
+        }
 }
 
-void ZorkUL::goRoom(Command command) {
-	if (!command.hasSecondWord()) {
-		cout << "incomplete input"<< endl;
-		return;
-	}
-
-	string direction = command.getSecondWord();
-
-	// Try to leave current room.
-	Room* nextRoom = currentRoom->nextRoom(direction);
-
-	if (nextRoom == NULL)
-		cout << "underdefined input"<< endl;
-	else {
-		currentRoom = nextRoom;
-		cout << currentRoom->longDescription() << endl;
-	}
-}
-
-string ZorkUL::go(string direction) {
-	//Make the direction lowercase
-	//transform(direction.begin(), direction.end(), direction.begin(),:: tolower);
-	//Move to the next room
-	Room* nextRoom = currentRoom->nextRoom(direction);
-	if (nextRoom == NULL)
-		return("direction null");
-	else
-	{
-		currentRoom = nextRoom;
-		return currentRoom->longDescription();
-	}
+string ZorkUL::go(string direction)
+{
+    //Make the direction lowercase
+    //transform(direction.begin(), direction.end(), direction.begin(),:: tolower);
+    //Move to the next room
+    Room *nextRoom = currentRoom->nextRoom(direction);
+    if (nextRoom == NULL)
+        return ("direction null");
+    else {
+        currentRoom = nextRoom;
+        return currentRoom->longDescription();
+    }
 }

@@ -4,14 +4,16 @@
 #include "Command.h"
 #include "CommandWords.h"
 
+#include <QLineEdit>
+
 class Parser {
 private:
 	CommandWords *commands;
 
 public:
-	Parser();
-	Command* getCommand();
-	void showCommands();
+    Parser();
+    Command *getCommand(string txt);
+    vector<string> showCommands();
 };
 
 #endif /*PARSER_H_*/

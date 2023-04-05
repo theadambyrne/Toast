@@ -14,7 +14,7 @@ CommandWords::CommandWords() {
 		validCommands.push_back("map");
 		validCommands.push_back("take");
 		validCommands.push_back("put");
-	}
+    }
 }
 
 /**
@@ -34,11 +34,8 @@ bool CommandWords::isCommand(string aString) {
 /*
  * Print all valid commands to System.out.
  */
-void CommandWords::showAll() {
-	//Loops through validCommands and prints each to the screen.
-	for (unsigned int i = 0; i < validCommands.size(); i++)
-	{
-		cout << validCommands[i]<< "  ";
-	}
-	cout << endl;
+vector<string> CommandWords::showAll()
+{
+    //Loops through validCommands and prints each to the screen.
+    return validCommands;
 }

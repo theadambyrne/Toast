@@ -1,5 +1,4 @@
 #include "Room.h"
-#include "Command.h"
 
 
 Room::Room(string description) {
@@ -21,16 +20,19 @@ string Room::shortDescription() {
 	return description;
 }
 
-string Room::longDescription() {
-	return "room = " + description + ".\n" + displayItem() + exitString();
+string Room::longDescription()
+{
+    return "\nRoom " + description + ".\n" + displayItem() + exitString();
 }
 
-string Room::exitString() {
-	string returnString = "\nexits =";
-	for (map<string, Room*>::iterator i = exits.begin(); i != exits.end(); i++)
-		// Loop through map
-		returnString += "  " + i->first;	// access the "first" element of the pair (direction as a string)
-	return returnString;
+string Room::exitString()
+{
+    string returnString = "\nExits >";
+    for (map<string, Room *>::iterator i = exits.begin(); i != exits.end(); i++)
+        // Loop through map
+        returnString += "  "
+                        + i->first; // access the "first" element of the pair (direction as a string)
+    return returnString;
 }
 
 Room* Room::nextRoom(string direction) {
@@ -48,10 +50,10 @@ void Room::addItem(Item *inItem) {
 }
 
 string Room::displayItem() {
-    string tempString = "items in room = ";
+    string tempString = "Items > ";
     int sizeItems = (itemsInRoom.size());
     if (itemsInRoom.size() < 1) {
-        tempString = "no items in room";
+        tempString = "no items in this room";
         }
     else if (itemsInRoom.size() > 0) {
        int x = (0);
