@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "ZorkUL.h"
+
 #include <QLineEdit>
 #include <QMainWindow>
 #include <QTextEdit>
@@ -17,6 +19,10 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    ZorkUL game;
+
+private slots:
+    void on_mapButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -24,8 +30,6 @@ private:
     QLineEdit *commandArea;
 
     void handleInput();
-    void startGame();
-    void processInput(const QString &inputText);
-    void typeText(const QString &txt, QTextBrowser *output);
+    void processInput(QString &inputText);
 };
 #endif // MAINWINDOW_H

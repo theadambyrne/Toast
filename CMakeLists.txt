@@ -17,6 +17,21 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        Character.cpp
+        Character.h
+        Command.cpp
+        Command.h
+        CommandWords.cpp
+        CommandWords.h
+        item.cpp
+        item.h
+        Parser.cpp
+        Parser.h
+        Room.cpp
+        Room.h
+        ZorkUL.cpp
+        ZorkUL.h
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -24,6 +39,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
+
+qt6_add_resources(RESOURCE_FILES Resources.qrc)
+
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Toast APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
