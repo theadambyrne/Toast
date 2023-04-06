@@ -1,8 +1,10 @@
 #include "ZorkUL.h"
+#include <iostream>
 
 ZorkUL::ZorkUL()
 {
     createRooms();
+    inventory = {};
 }
 
 void ZorkUL::createRooms()
@@ -89,7 +91,8 @@ bool ZorkUL::processCommand(Command command, QTextBrowser *output)
                 int location = currentRoom->isItemInRoom(command.getSecondWord());
 
                 if (location == 0) {
-                    printMessage(output, QString::fromStdString(command.getSecondWord() + " taken"));
+                    inventory.push_back(command.getSecondWord());
+
                 } else {
                     printMessage(output,
                                  QString::fromStdString(command.getSecondWord() + " is not in room "
@@ -100,6 +103,17 @@ bool ZorkUL::processCommand(Command command, QTextBrowser *output)
 
         else if (commandWord.compare("put") == 0) {
             // remove from inventory
+            auto it = std::find(inventory.begin(), inventory.end(), command.getSecondWord());
+            if (it != inventory.end()) {
+                inventory.erase(std::remove(inventory.begin(),
+                                            inventory.end(),
+                                            command.getSecondWord()),
+                                inventory.end());
+            } else {
+                printMessage(output,
+                             QString::fromStdString(command.getSecondWord()
+                                                    + " not found in inventory"));
+            }
         }
 
         else if (commandWord.compare("quit") == 0) {
@@ -128,4 +142,13 @@ string ZorkUL::goRoom(Command command)
         } else {
             return "invalid direction";
         }
+}
+
+QString ZorkUL::getInventory()
+{
+        string result = "Inventory:";
+        for (std::vector<std::string>::iterator t = inventory.begin(); t != inventory.end(); t++) {
+            result.append(" " + *t);
+        }
+        return QString::fromStdString(result);
 }

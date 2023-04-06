@@ -1,8 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QLabel>
 #include <QLineEdit>
 #include <QMainWindow>
+#include <QPushButton>
 #include <QTextBrowser>
 #include "ZorkUL.h"
 
@@ -25,6 +27,9 @@ private:
     Ui::MainWindow *ui;
     QTextBrowser *outputArea;
     QLineEdit *commandArea;
+    QLabel *inventoryArea;
+    QPushButton *mapButton;
+    QPushButton *guiButton;
 
     ZorkUL game;
 

@@ -18,6 +18,7 @@ private:
     void displayItems();
     void printWelcome(QTextBrowser *output);
     void printMessage(QTextBrowser *output, const QString &txt);
+    vector<string> inventory;
 
 public:
     ZorkUL();
@@ -25,6 +26,7 @@ public:
     bool running;
     void play(QTextBrowser *output);
     bool processCommand(Command command, QTextBrowser *output);
+    QString getInventory();
 };
 
 #endif /*ZORKUL_H_*/
