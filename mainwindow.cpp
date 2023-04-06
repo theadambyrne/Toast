@@ -14,12 +14,17 @@ MainWindow::MainWindow(QWidget *parent)
     this->setWindowTitle("Toast");
 
     outputArea = findChild<QTextBrowser *>("outputArea");
+    outputArea->setReadOnly(true);
+    outputArea->setTextInteractionFlags(Qt::NoTextInteraction);
+    outputArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    outputArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
     commandArea = findChild<QLineEdit *>("commandArea");
     commandArea->setPlaceholderText("Enter commands here ...");
     commandArea->setFocus();
 
     // welcome message
-    outputArea->insertHtml(
+    outputArea->setHtml(
         "<center>"
         "<h1>Toast!</h1>"
         "<p>A Zork inspired text-adventure game with GUI controls.</p></center><hr/><br/>"
@@ -62,6 +67,7 @@ void MainWindow::processInput(QString &inputText)
 }
 
 void MainWindow::on_mapButton_clicked()
+
 {
     if (game.running) {
         // dialog

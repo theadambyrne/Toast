@@ -17,8 +17,6 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
-        Character.cpp
-        Character.h
         Command.cpp
         Command.h
         CommandWords.cpp

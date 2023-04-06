@@ -1,12 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "ZorkUL.h"
-
 #include <QLineEdit>
 #include <QMainWindow>
-#include <QTextEdit>
-#include <qtextbrowser.h>
+#include <QTextBrowser>
+#include "ZorkUL.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,7 +17,6 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    ZorkUL game;
 
 private slots:
     void on_mapButton_clicked();
@@ -28,6 +25,8 @@ private:
     Ui::MainWindow *ui;
     QTextBrowser *outputArea;
     QLineEdit *commandArea;
+
+    ZorkUL game;
 
     void handleInput();
     void processInput(QString &inputText);

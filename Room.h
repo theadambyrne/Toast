@@ -27,7 +27,6 @@ public:
     void addItem(Item *inItem);
     string displayItem();
     int isItemInRoom(string inString);
-    void removeItemFromRoom(int location);
 };
 
 #endif
