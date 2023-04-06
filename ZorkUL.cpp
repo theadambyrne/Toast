@@ -1,8 +1,3 @@
-#include <QTimer>
-#include <iostream>
-#include <thread>
-
-using namespace std;
 #include "ZorkUL.h"
 
 ZorkUL::ZorkUL()
@@ -54,7 +49,7 @@ void ZorkUL::play(QTextBrowser *output)
 
 void ZorkUL::printWelcome(QTextBrowser *output)
 {
-    printMessage(output, QString::fromStdString("\n" + currentRoom->longDescription()));
+    printMessage(output, QString::fromStdString(currentRoom->longDescription()));
 }
 
 void ZorkUL::printMessage(QTextBrowser *output, const QString &txt)
@@ -64,7 +59,7 @@ void ZorkUL::printMessage(QTextBrowser *output, const QString &txt)
         output->insertPlainText(c);
         output->moveCursor(QTextCursor::End);
     }
-    output->append("");
+    output->append("---");
 }
 
 /**
@@ -82,19 +77,7 @@ bool ZorkUL::processCommand(Command command, QTextBrowser *output)
         string commandWord = command.getCommandWord();
 
         if (commandWord.compare("info") == 0)
-            printMessage(output, "INFO TODO");
-        //            printHelp();
-
-        else if (commandWord.compare("map") == 0) {
-            printMessage(output,
-                         "[h] --- [f] --- [g]\n"
-                         "         |         \n"
-                         "         |         \n"
-                         "[c] --- [a] --- [b]\n"
-                         "         |         \n"
-                         "         |         \n"
-                         "[i] --- [d] --- [e]");
-        }
+            printMessage(output, "go (direction), take (item), put (item), info, quit");
 
         else if (commandWord.compare("go") == 0)
             printMessage(output, QString::fromStdString(goRoom(command)));
@@ -103,50 +86,32 @@ bool ZorkUL::processCommand(Command command, QTextBrowser *output)
             if (!command.hasSecondWord()) {
                 printMessage(output, "incomplete input");
             } else if (command.hasSecondWord()) {
-                printMessage(output,
-                             QString::fromStdString("you're trying to take "
-                                                    + command.getSecondWord()));
                 int location = currentRoom->isItemInRoom(command.getSecondWord());
-                if (location < 0)
-                    printMessage(output, QString::fromStdString("Item is not in room"));
-                else
-                    printMessage(output, QString::fromStdString("Item is in room"));
 
-                printMessage(output, QString::fromStdString(&"Number "[location]));
-                printMessage(output, QString::fromStdString(currentRoom->longDescription()));
+                if (location == 0) {
+                    printMessage(output, QString::fromStdString(command.getSecondWord() + " taken"));
+                } else {
+                    printMessage(output,
+                                 QString::fromStdString(command.getSecondWord() + " is not in room "
+                                                        + currentRoom->shortDescription()));
+                }
             }
         }
 
         else if (commandWord.compare("put") == 0) {
+            // remove from inventory
         }
-        /*
-    {
-    if (!command.hasSecondWord()) {
-		cout << "incomplete input"<< endl;
-        }
-        else
-            if (command.hasSecondWord()) {
-            cout << "you're adding " + command.getSecondWord() << endl;
-            itemsInRoom.push_Back;
-        }
-    }
-*/
+
         else if (commandWord.compare("quit") == 0) {
             if (command.hasSecondWord())
-                printMessage(output, QString::fromStdString("Overdefined Input"));
+                printMessage(output, QString::fromStdString("overdefined input"));
             else
-                printMessage(output, "Quiting game");
+                printMessage(output, "Exited game");
             this->running = false;
             return true; /**signal to quit*/
         }
         return false;
 }
-/** COMMANDS **/
-//void ZorkUL::printHelp() {
-//        for (const auto &str : parser.showCommands()) {
-//            printMessage(output, )
-//        }
-//}
 
 string ZorkUL::goRoom(Command command)
 {
@@ -155,28 +120,12 @@ string ZorkUL::goRoom(Command command)
         }
 
         string direction = command.getSecondWord();
-
-        // Try to leave current room.
         Room *nextRoom = currentRoom->nextRoom(direction);
 
-        if (nextRoom == NULL)
-            return "underdefined input";
-        else {
+        if (nextRoom != NULL) {
             currentRoom = nextRoom;
             return currentRoom->longDescription();
+        } else {
+            return "invalid direction";
         }
-}
-
-string ZorkUL::go(string direction)
-{
-    //Make the direction lowercase
-    //transform(direction.begin(), direction.end(), direction.begin(),:: tolower);
-    //Move to the next room
-    Room *nextRoom = currentRoom->nextRoom(direction);
-    if (nextRoom == NULL)
-        return ("direction null");
-    else {
-        currentRoom = nextRoom;
-        return currentRoom->longDescription();
-    }
 }

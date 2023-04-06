@@ -1,8 +1,11 @@
 #include "item.h"
+#include <iostream>
+using namespace std;
 
-Item::Item (string inDescription, int inWeightGrams, float inValue/**, int weaponCheck*/) {
-	description = inDescription;
-	setWeight(inWeightGrams);
+Item::Item(string inDescription, int inWeightGrams, float inValue /**, int weaponCheck*/)
+{
+    description = inDescription;
+    setWeight(inWeightGrams);
 	value = inValue;
 	/**weaponCheck(isWeapon);*/
 }
