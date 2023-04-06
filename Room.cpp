@@ -22,12 +22,12 @@ string Room::shortDescription() {
 
 string Room::longDescription()
 {
-    return "Room " + description + ".\n" + displayItem() + "\n" + exitString();
+    return "Room: " + description + "\n" + displayItem() + "\n" + exitString();
 }
 
 string Room::exitString()
 {
-    string returnString = "Exits >";
+    string returnString = "Exits:";
     for (map<string, Room *>::iterator i = exits.begin(); i != exits.end(); i++)
         // Loop through map
         returnString += "  "
@@ -50,18 +50,17 @@ void Room::addItem(Item *inItem) {
 }
 
 string Room::displayItem() {
-    string tempString = "Items > ";
+    string tempString = "Items: ";
     int sizeItems = (itemsInRoom.size());
     if (itemsInRoom.size() < 1) {
-        tempString = "no items in this room";
-        }
-    else if (itemsInRoom.size() > 0) {
-       int x = (0);
+        tempString = "No items";
+    } else if (itemsInRoom.size() > 0) {
+        int x = (0);
         for (int n = sizeItems; n > 0; n--) {
             tempString = tempString + itemsInRoom[x].getShortDescription() + "  " ;
             x++;
-            }
         }
+    }
     return tempString;
     }
 

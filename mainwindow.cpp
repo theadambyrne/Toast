@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     commandArea->setFocus();
 
     // welcome message
-    outputArea->insertHtml(
+    outputArea->setHtml(
         "<center>"
         "<h1>Toast!</h1>"
         "<p>A Zork inspired text-adventure game with GUI controls.</p></center><hr/><br/>"
@@ -66,7 +66,8 @@ void MainWindow::processInput(QString &inputText)
     }
 }
 
-void MainWindow::onMapButtonClicked()
+void MainWindow::on_mapButton_clicked()
+
 {
     if (game.running) {
         // dialog

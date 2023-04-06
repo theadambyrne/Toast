@@ -17,15 +17,16 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    ZorkUL game;
 
 private slots:
-    void onMapButtonClicked();
+    void on_mapButton_clicked();
 
 private:
     Ui::MainWindow *ui;
     QTextBrowser *outputArea;
     QLineEdit *commandArea;
+
+    ZorkUL game;
 
     void handleInput();
     void processInput(QString &inputText);
