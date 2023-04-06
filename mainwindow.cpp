@@ -23,6 +23,14 @@ MainWindow::MainWindow(QWidget *parent)
     commandArea->setPlaceholderText("Enter commands here ...");
     commandArea->setFocus();
 
+    inventoryArea = findChild<QLabel *>("inventoryLabel");
+    mapButton = findChild<QPushButton *>("mapButton");
+    guiButton = findChild<QPushButton *>("guiButton");
+
+    inventoryArea->setVisible(false);
+    mapButton->setVisible(false);
+    guiButton->setVisible(false);
+
     // welcome message
     outputArea->setHtml(
         "<center>"
@@ -59,9 +67,13 @@ void MainWindow::processInput(QString &inputText)
     if (inputText == "start" && !game.running) {
         outputArea->clear();
         game.play(outputArea);
+        inventoryArea->setVisible(true);
+        mapButton->setVisible(true);
+        guiButton->setVisible(true);
     } else if (game.running) {
         Command *command = game.parser.getCommand(inputText.toStdString());
         game.processCommand(*command, outputArea);
+        inventoryArea->setText(game.getInventory());
         delete command;
     }
 }

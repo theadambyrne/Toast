@@ -26,7 +26,7 @@
       <x>30</x>
       <y>500</y>
       <width>951</width>
-      <height>51</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -87,6 +87,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </property>
     <property name="text">
      <string>GUI</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="inventoryLabel">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>560</y>
+      <width>951</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font:14pt;</string>
+    </property>
+    <property name="text">
+     <string>Inventory</string>
     </property>
    </widget>
   </widget>
