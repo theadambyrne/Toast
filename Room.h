@@ -27,6 +27,7 @@ public:
     void addItem(Item *inItem);
     string displayItem();
     int isItemInRoom(string inString);
+    bool locked = false;
 };
 
 #endif

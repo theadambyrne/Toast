@@ -16,13 +16,14 @@ void Room::setExits(Room *north, Room *east, Room *south, Room *west) {
 		exits["west"] = west;
 }
 
-string Room::shortDescription() {
-	return description;
+string Room::shortDescription()
+{
+    return description;
 }
 
 string Room::longDescription()
 {
-    return "Room: " + description + "\n" + displayItem() + "\n" + exitString();
+    return "You are in the " + description + "\n\n" + displayItem() + "\n" + exitString();
 }
 
 string Room::exitString()
@@ -44,8 +45,6 @@ Room* Room::nextRoom(string direction) {
 }
 
 void Room::addItem(Item *inItem) {
-    //cout <<endl;
-    //cout << "Just added" + inItem->getLongDescription();
     itemsInRoom.push_back(*inItem);
 }
 

@@ -29,7 +29,8 @@ set(PROJECT_SOURCES
         Room.h
         ZorkUL.cpp
         ZorkUL.h
-
+        Character.cpp
+        Character.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

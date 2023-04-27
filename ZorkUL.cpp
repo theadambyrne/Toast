@@ -1,42 +1,32 @@
 #include "ZorkUL.h"
+#include "Character.h"
 #include <iostream>
 
 ZorkUL::ZorkUL()
 {
     createRooms();
-    inventory = {};
+    player = new Character("player");
 }
 
 void ZorkUL::createRooms()
 {
-    Room *a, *b, *c, *d, *e, *f, *g, *h, *i;
+    Room *breadSlot, *crumbTray, *controlUnit, *timerUnit, *powerSupply;
+    Item *crumb, *screwdriver;
 
-    a = new Room("a");
-    a->addItem(new Item("x", 1, 11));
-    a->addItem(new Item("y", 2, 22));
-	b = new Room("b");
-        b->addItem(new Item("xx", 3, 33));
-        b->addItem(new Item("yy", 4, 44));
-	c = new Room("c");
-	d = new Room("d");
-	e = new Room("e");
-	f = new Room("f");
-	g = new Room("g");
-	h = new Room("h");
-	i = new Room("i");
+    breadSlot = new Room("Bread Slot");
+    crumbTray = new Room("Crumb Tray");
+    controlUnit = new Room("Control Unit");
+    timerUnit = new Room("Timer");
+    powerSupply = new Room("Power Supply");
 
-//             (N, E, S, W)
-	a->setExits(f, b, d, c);
-	b->setExits(NULL, NULL, NULL, a);
-	c->setExits(NULL, a, NULL, NULL);
-	d->setExits(a, e, NULL, i);
-	e->setExits(NULL, NULL, NULL, d);
-	f->setExits(NULL, g, a, h);
-	g->setExits(NULL, NULL, NULL, f);
-	h->setExits(NULL, f, NULL, NULL);
-    i->setExits(NULL, d, NULL, NULL);
+    crumbTray->addItem(crumb = new Item("crumb"));
+    controlUnit->addItem(screwdriver = new Item("screwdriver"));
 
-    currentRoom = a;
+    breadSlot->setExits(controlUnit, NULL, crumbTray, NULL);
+    crumbTray->setExits(breadSlot, NULL, NULL, NULL);
+    controlUnit->setExits(NULL, powerSupply, NULL, timerUnit);
+
+    currentRoom = breadSlot;
     running = false;
 }
 
@@ -46,17 +36,13 @@ void ZorkUL::createRooms()
 void ZorkUL::play(QTextBrowser *output)
 {
     running = true;
-    printWelcome(output);
-}
-
-void ZorkUL::printWelcome(QTextBrowser *output)
-{
     printMessage(output, QString::fromStdString(currentRoom->longDescription()));
 }
 
 void ZorkUL::printMessage(QTextBrowser *output, const QString &txt)
 {
     output->append("");
+
     for (const QChar &c : txt) {
         output->insertPlainText(c);
         output->moveCursor(QTextCursor::End);
@@ -91,7 +77,7 @@ bool ZorkUL::processCommand(Command command, QTextBrowser *output)
                 int location = currentRoom->isItemInRoom(command.getSecondWord());
 
                 if (location == 0) {
-                    inventory.push_back(command.getSecondWord());
+                    player->addItem(command.getSecondWord());
 
                 } else {
                     printMessage(output,
@@ -109,6 +95,8 @@ bool ZorkUL::processCommand(Command command, QTextBrowser *output)
                                             inventory.end(),
                                             command.getSecondWord()),
                                 inventory.end());
+                printMessage(output,
+                             QString::number(currentRoom->isItemInRoom(command.getSecondWord())));
             } else {
                 printMessage(output,
                              QString::fromStdString(command.getSecondWord()
@@ -147,7 +135,9 @@ string ZorkUL::goRoom(Command command)
 QString ZorkUL::getInventory()
 {
         string result = "Inventory:";
-        for (std::vector<std::string>::iterator t = inventory.begin(); t != inventory.end(); t++) {
+        for (std::vector<std::string>::iterator t = player->itemsInCharacter.begin();
+             t != player->itemsInCharacter.end();
+             t++) {
             result.append(" " + *t);
         }
         return QString::fromStdString(result);
