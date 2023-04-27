@@ -26,6 +26,10 @@ void ZorkUL::createRooms()
     crumbTray->setExits(breadSlot, NULL, NULL, NULL);
     controlUnit->setExits(NULL, powerSupply, NULL, timerUnit);
 
+    controlUnit->locked = true;
+    timerUnit->locked = true;
+    powerSupply->locked = true;
+
     currentRoom = breadSlot;
     running = false;
 }
@@ -123,6 +127,9 @@ string ZorkUL::goRoom(Command command)
 
         string direction = command.getSecondWord();
         Room *nextRoom = currentRoom->nextRoom(direction);
+        if (nextRoom->locked) {
+            return "Locked, find a key!";
+        }
 
         if (nextRoom != NULL) {
             currentRoom = nextRoom;
