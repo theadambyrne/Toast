@@ -28,6 +28,8 @@ public:
     string displayItem();
     int isItemInRoom(string inString);
     bool locked = false;
+    string hint;
+    Item *key;
 };
 
 #endif

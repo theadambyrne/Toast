@@ -11,7 +11,7 @@ ZorkUL::ZorkUL()
 void ZorkUL::createRooms()
 {
     Room *breadSlot, *crumbTray, *controlUnit, *timerUnit, *powerSupply;
-    Item *crumb, *screwdriver;
+    Item *wirecutters, *screwdriver;
 
     breadSlot = new Room("Bread Slot");
     crumbTray = new Room("Crumb Tray");
@@ -19,16 +19,24 @@ void ZorkUL::createRooms()
     timerUnit = new Room("Timer");
     powerSupply = new Room("Power Supply");
 
-    crumbTray->addItem(crumb = new Item("crumb"));
-    controlUnit->addItem(screwdriver = new Item("screwdriver"));
+    crumbTray->addItem(screwdriver = new Item("screwdriver"));
+    controlUnit->addItem(wirecutters = new Item("wirecutters"));
 
     breadSlot->setExits(controlUnit, NULL, crumbTray, NULL);
     crumbTray->setExits(breadSlot, NULL, NULL, NULL);
     controlUnit->setExits(NULL, powerSupply, NULL, timerUnit);
 
     controlUnit->locked = true;
+    controlUnit->key = screwdriver;
+    controlUnit->hint = "Hmm lots of screws.";
+
     timerUnit->locked = true;
+    timerUnit->key = wirecutters;
+    timerUnit->hint = "Cut the red wire";
+
     powerSupply->locked = true;
+    powerSupply->key = wirecutters;
+    powerSupply->hint = "Cut the red wire";
 
     currentRoom = breadSlot;
     running = false;
@@ -119,6 +127,17 @@ bool ZorkUL::processCommand(Command command, QTextBrowser *output)
         return false;
 }
 
+bool ZorkUL::hasKey(Item *key, Character *player)
+{
+        for (std::vector<std::string>::iterator t = player->itemsInCharacter.begin();
+             t != player->itemsInCharacter.end();
+             t++) {
+            if (key->getShortDescription() == *t)
+                return true;
+        }
+        return false;
+}
+
 string ZorkUL::goRoom(Command command)
 {
         if (!command.hasSecondWord()) {
@@ -128,9 +147,15 @@ string ZorkUL::goRoom(Command command)
         string direction = command.getSecondWord();
         Room *nextRoom = currentRoom->nextRoom(direction);
         if (nextRoom->locked) {
-            return "Locked, find a key!";
-        }
+            if (hasKey(nextRoom->key, player)) {
+                currentRoom = nextRoom;
+                return "Unlocked by " + nextRoom->key->getShortDescription() + "\n"
+                       + currentRoom->longDescription();
 
+            } else {
+                return "Locked. " + nextRoom->hint;
+            }
+        }
         if (nextRoom != NULL) {
             currentRoom = nextRoom;
             return currentRoom->longDescription();
