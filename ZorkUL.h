@@ -15,6 +15,7 @@ private:
 	void createRooms();
     void printHelp();
     string goRoom(Command command);
+    string solvePuzzle(Puzzle puzzle, Command command);
     void createItems();
     void displayItems();
     void printWelcome(QTextBrowser *output);

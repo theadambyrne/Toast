@@ -1,5 +1,6 @@
 #include "ZorkUL.h"
 #include "Character.h"
+#include "puzzle.h"
 #include <iostream>
 
 ZorkUL::ZorkUL()
@@ -12,6 +13,7 @@ void ZorkUL::createRooms()
 {
     Room *breadSlot, *crumbTray, *controlUnit, *timerUnit, *powerSupply;
     Item *wirecutters, *screwdriver;
+    Puzzle *winCondition = new Puzzle("Which wire do you cut? try red, green or blue.", "red");
 
     breadSlot = new Room("Bread Slot");
     crumbTray = new Room("Crumb Tray");
@@ -32,11 +34,13 @@ void ZorkUL::createRooms()
 
     timerUnit->locked = true;
     timerUnit->key = wirecutters;
-    timerUnit->hint = "Cut the red wire";
+    timerUnit->hint = "You might need to cut some wires";
+    timerUnit->puzzle = winCondition;
 
     powerSupply->locked = true;
     powerSupply->key = wirecutters;
-    powerSupply->hint = "Cut the red wire";
+    powerSupply->hint = "Probably some wires in there";
+    powerSupply->puzzle = winCondition;
 
     currentRoom = breadSlot;
     running = false;
@@ -77,10 +81,38 @@ bool ZorkUL::processCommand(Command command, QTextBrowser *output)
         string commandWord = command.getCommandWord();
 
         if (commandWord.compare("info") == 0)
-            printMessage(output, "go (direction), take (item), put (item), info, quit");
+            printMessage(output,
+                         "go (direction), take (item), put (item), map, try (option), info, quit");
 
-        else if (commandWord.compare("go") == 0)
+        else if (commandWord.compare("go") == 0) {
             printMessage(output, QString::fromStdString(goRoom(command)));
+        }
+
+        else if (commandWord.compare("try") == 0 && currentRoom->puzzle) {
+            printMessage(output, QString::fromStdString(solvePuzzle(*currentRoom->puzzle, command)));
+        }
+
+        else if (commandWord.compare("map") == 0)
+            output->insertHtml(
+                "<br/>"
+                "<table border=1 style='border-collapse: collapse; border-color:black;'>"
+                "<tr>"
+                "<td style='padding:10px; text-align:center;'>&#x1f512; Timer</td>"
+                "<td style='padding:10px; text-align:center;'>&#x1f512; Control Unit</td>"
+                "<td style='padding:10px; text-align:center;'>&#x1f512; Power Supply</td>"
+                "</tr>"
+                "<tr>"
+                "<td style='background-color:black;'>&nbsp;</td>"
+                "<td style='padding:10px; text-align:center;'>Bread Slot</td>"
+                "<td style='background-color:black;'>&nbsp;</td>"
+                "</tr>"
+                "<tr>"
+                "<td style='background-color:black;'>&nbsp;</td>"
+                "<td style='padding:10px; text-align:center;'>Crumb Tray</td>"
+                "<td style='background-color:black;'>&nbsp;</td>"
+                "</tr>"
+                "</table>"
+                "<br/>");
 
         else if (commandWord.compare("take") == 0) {
             if (!command.hasSecondWord()) {
@@ -136,6 +168,21 @@ bool ZorkUL::hasKey(Item *key, Character *player)
                 return true;
         }
         return false;
+}
+
+string ZorkUL::solvePuzzle(Puzzle puzzle, Command command)
+{
+        if (!command.hasSecondWord()) {
+            return "incomplete input";
+        }
+
+        string option = command.getSecondWord();
+
+        if (puzzle.checkSolution(option)) {
+            this->running = false;
+            return "🏆 WIN";
+        }
+        return "Uh oh wrong answer!";
 }
 
 string ZorkUL::goRoom(Command command)

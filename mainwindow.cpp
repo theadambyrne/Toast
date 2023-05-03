@@ -25,11 +25,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     inventoryArea = findChild<QLabel *>("inventoryLabel");
     mapButton = findChild<QPushButton *>("mapButton");
-    guiButton = findChild<QPushButton *>("guiButton");
-
-    inventoryArea->setVisible(false);
-    mapButton->setVisible(false);
-    guiButton->setVisible(false);
 
     // welcome message
     outputArea->setHtml(
@@ -67,9 +62,6 @@ void MainWindow::processInput(QString &inputText)
     if (inputText == "start" && !game.running) {
         outputArea->clear();
         game.play(outputArea);
-        inventoryArea->setVisible(true);
-        mapButton->setVisible(true);
-        guiButton->setVisible(true);
     } else if (game.running) {
         Command *command = game.parser.getCommand(inputText.toStdString());
         game.processCommand(*command, outputArea);

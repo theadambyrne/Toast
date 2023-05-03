@@ -31,6 +31,8 @@ set(PROJECT_SOURCES
         ZorkUL.h
         Character.cpp
         Character.h
+        puzzle.h
+        puzzle.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

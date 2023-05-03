@@ -1,10 +1,11 @@
 #ifndef ROOM_H_
 #define ROOM_H_
 
+#include "item.h"
+#include "puzzle.h"
 #include <map>
 #include <string>
 #include <vector>
-#include "item.h"
 using namespace std;
 using std::vector;
 
@@ -30,6 +31,7 @@ public:
     bool locked = false;
     string hint;
     Item *key;
+    Puzzle *puzzle;
 };
 
 #endif

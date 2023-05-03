@@ -33,6 +33,10 @@ string Room::exitString()
         // Loop through map
         returnString += "  "
                         + i->first; // access the "first" element of the pair (direction as a string)
+
+    if (this->puzzle) {
+        return "Puzzle: " + this->puzzle->getProblem();
+    }
     return returnString;
 }
 
