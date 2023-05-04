@@ -21,7 +21,16 @@ public:
     ~MainWindow();
 
 private slots:
+    void on_goNorthButton_clicked();
     void on_mapButton_clicked();
+
+    void on_goSouthButton_clicked();
+
+    void on_goWestButton_clicked();
+
+    void on_goEastButton_clicked();
+
+    void on_startButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -30,7 +39,12 @@ private:
     QLabel *inventoryArea;
     QPushButton *mapButton;
     QPushButton *guiButton;
-
+    QPushButton *goNorthButton;
+    QPushButton *goEastButton;
+    QPushButton *goWestButton;
+    QPushButton *goSouthButton;
+    QPushButton *startButton;
+    void startGame();
     ZorkUL game;
 
     void handleInput();

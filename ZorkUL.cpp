@@ -193,22 +193,21 @@ string ZorkUL::goRoom(Command command)
 
         string direction = command.getSecondWord();
         Room *nextRoom = currentRoom->nextRoom(direction);
+        if (currentRoom->nextRoom(direction) == NULL) {
+            return "invalid direction";
+        }
+
         if (nextRoom->locked) {
             if (hasKey(nextRoom->key, player)) {
                 currentRoom = nextRoom;
                 return "Unlocked by " + nextRoom->key->getShortDescription() + "\n"
                        + currentRoom->longDescription();
-
-            } else {
-                return "Locked. " + nextRoom->hint;
             }
+            return "Locked. " + nextRoom->hint;
         }
-        if (nextRoom != NULL) {
-            currentRoom = nextRoom;
-            return currentRoom->longDescription();
-        } else {
-            return "invalid direction";
-        }
+
+        currentRoom = nextRoom;
+        return currentRoom->longDescription();
 }
 
 QString ZorkUL::getInventory()
