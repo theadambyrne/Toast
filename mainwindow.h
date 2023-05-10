@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QMainWindow>
+#include <QProgressBar>
 #include <QPushButton>
 #include <QTextBrowser>
 #include "ZorkUL.h"
@@ -31,6 +32,7 @@ private slots:
     void on_goEastButton_clicked();
 
     void on_startButton_clicked();
+    void onTimerTimeout();
 
 private:
     Ui::MainWindow *ui;
@@ -46,6 +48,9 @@ private:
     QPushButton *startButton;
     void startGame();
     ZorkUL game;
+    QTimer *timer;
+    int timeLimit;
+    QProgressBar *progress;
 
     void handleInput();
     void processInput(QString &inputText);

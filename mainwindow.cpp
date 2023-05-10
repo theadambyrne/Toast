@@ -5,6 +5,7 @@
 #include "./ui_mainwindow.h"
 #include "QtWidgets/qtextbrowser.h"
 #include "ZorkUL.h"
+#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -39,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     inventoryArea = findChild<QLabel *>("inventoryLabel");
     mapButton = findChild<QPushButton *>("mapButton");
-    goNorthButton = findChild<QPushButton *>("goNorthButton");
+    goNorthButton = findChild<QPushButton *>("goNorthButtonx");
     goEastButton = findChild<QPushButton *>("goEastButton");
     goWestButton = findChild<QPushButton *>("goWestButton");
     goSouthButton = findChild<QPushButton *>("goSouthButton");
@@ -51,6 +52,14 @@ MainWindow::MainWindow(QWidget *parent)
     goEastButton->hide();
     goWestButton->hide();
     goSouthButton->hide();
+    timer = new QTimer(this);
+    timeLimit = 60;
+    progress = findChild<QProgressBar *>("progressBar");
+    progress->setRange(0, timeLimit);
+    progress->setValue(0);
+    progress->setStyleSheet("QProgressBar::chunk {background-color: #ff4757;}");
+    progress->setFormat("");
+    connect(timer, &QTimer::timeout, this, &MainWindow::onTimerTimeout);
 }
 
 MainWindow::~MainWindow()
@@ -68,6 +77,17 @@ void MainWindow::handleInput()
     }
 }
 
+void MainWindow::onTimerTimeout()
+{
+    if (progress->value() > 59 && game.running) {
+        outputArea->clear();
+        outputArea->insertPlainText("Game Over");
+        game.running = false;
+    } else if (game.running) {
+        progress->setValue(progress->value() + 1);
+    }
+}
+
 void MainWindow::processInput(QString &inputText)
 {
     if (inputText == "start" && !game.running) {
@@ -79,10 +99,14 @@ void MainWindow::processInput(QString &inputText)
         goEastButton->show();
         goWestButton->show();
         goSouthButton->show();
+        startButton->hide();
+        timer->start(1000);
+
     } else if (game.running) {
         Command *command = game.parser.getCommand(inputText.toStdString());
         game.processCommand(*command, outputArea);
         inventoryArea->setText(game.getInventory());
+
         delete command;
     }
 }
@@ -137,6 +161,7 @@ void MainWindow::on_startButton_clicked()
 {
     if (!this->game.running) {
         this->game.running = true;
+        this->timer->start(1000);
         this->outputArea->clear();
         this->game.play(outputArea);
         this->inventoryArea->show();
