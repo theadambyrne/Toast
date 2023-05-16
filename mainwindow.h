@@ -41,6 +41,7 @@ private:
     QLabel *inventoryArea;
     QPushButton *mapButton;
     QPushButton *guiButton;
+    QFrame *itemsFrame;
     QPushButton *goNorthButton;
     QPushButton *goEastButton;
     QPushButton *goWestButton;

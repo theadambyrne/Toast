@@ -5,6 +5,7 @@
 #include "./ui_mainwindow.h"
 #include "QtWidgets/qtextbrowser.h"
 #include "ZorkUL.h"
+#include <algorithm>
 #include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -40,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     inventoryArea = findChild<QLabel *>("inventoryLabel");
     mapButton = findChild<QPushButton *>("mapButton");
-    goNorthButton = findChild<QPushButton *>("goNorthButtonx");
+    goNorthButton = findChild<QPushButton *>("goNorthButton");
     goEastButton = findChild<QPushButton *>("goEastButton");
     goWestButton = findChild<QPushButton *>("goWestButton");
     goSouthButton = findChild<QPushButton *>("goSouthButton");
@@ -60,6 +61,8 @@ MainWindow::MainWindow(QWidget *parent)
     progress->setStyleSheet("QProgressBar::chunk {background-color: #ff4757;}");
     progress->setFormat("");
     connect(timer, &QTimer::timeout, this, &MainWindow::onTimerTimeout);
+
+    itemsFrame = findChild<QFrame *>("itemsFrame");
 }
 
 MainWindow::~MainWindow()
@@ -106,6 +109,21 @@ void MainWindow::processInput(QString &inputText)
         Command *command = game.parser.getCommand(inputText.toStdString());
         game.processCommand(*command, outputArea);
         inventoryArea->setText(game.getInventory());
+
+        for (const std::string &str : game.player->itemsInCharacter) {
+            QString name = QString::fromStdString(str);
+            QPushButton *btn = new QPushButton(name);
+            btn->setParent(itemsFrame);
+            itemsFrame->show();
+            connect(btn, &QPushButton::clicked, [btn, this, str]() {
+                game.player->itemsInCharacter.erase(std::remove(game.player->itemsInCharacter.begin(),
+                                                                game.player->itemsInCharacter.end(),
+                                                                str),
+                                                    game.player->itemsInCharacter.end());
+                inventoryArea->setText(game.getInventory());
+                btn->deleteLater();
+            });
+        }
 
         delete command;
     }
