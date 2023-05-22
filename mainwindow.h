@@ -10,7 +10,10 @@
 #include "ZorkUL.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui
+{
+    class MainWindow;
+}
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -40,14 +43,18 @@ private:
     QLineEdit *commandArea;
     QLabel *inventoryArea;
     QPushButton *mapButton;
+    void updateRoomItems();
+    void updateInventoryFrame();
     QPushButton *guiButton;
     QFrame *itemsFrame;
+    QFrame *roomItemsFrame;
     QPushButton *goNorthButton;
     QPushButton *goEastButton;
     QPushButton *goWestButton;
     QPushButton *goSouthButton;
     QPushButton *startButton;
-    void startGame();
+    QLabel *itemsFrameLabel;
+    QLabel *roomItemsFrameLabel;
     ZorkUL game;
     QTimer *timer;
     int timeLimit;

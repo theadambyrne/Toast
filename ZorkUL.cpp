@@ -1,5 +1,6 @@
 #include "ZorkUL.h"
 #include "Character.h"
+#include "mainwindow.h"
 #include "puzzle.h"
 #include <iostream>
 
@@ -156,6 +157,7 @@ bool ZorkUL::processCommand(Command command, QTextBrowser *output)
             this->running = false;
             return true; /**signal to quit*/
         }
+
         return false;
 }
 
@@ -180,7 +182,7 @@ string ZorkUL::solvePuzzle(Puzzle puzzle, Command command)
 
         if (puzzle.checkSolution(option)) {
             this->running = false;
-            return "🏆 WIN";
+            return "🏆 WINNER";
         }
         return "Uh oh wrong answer!";
 }

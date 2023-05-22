@@ -9,21 +9,20 @@
 #include <QTextBrowser>
 #include <string>
 
-class ZorkUL {
+class ZorkUL
+{
 private:
-	Room *currentRoom;
-	void createRooms();
+    void createRooms();
     void printHelp();
     string goRoom(Command command);
     string solvePuzzle(Puzzle puzzle, Command command);
-    void createItems();
-    void displayItems();
-    void printWelcome(QTextBrowser *output);
     void printMessage(QTextBrowser *output, const QString &txt);
     vector<string> inventory;
 
 public:
     ZorkUL();
+    Room *currentRoom;
+
     Parser parser;
     bool running;
     void play(QTextBrowser *output);

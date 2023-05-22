@@ -5,7 +5,8 @@
 #include <string>
 using namespace std;
 
-class Item {
+class Item
+{
 private:
 	string description;
 	string longDescription;
@@ -14,16 +15,14 @@ private:
 	bool weaponCheck;
 
 public:
-    Item (string description, int inWeight, float inValue);
-    Item (string description);
+	Item(string description, int inWeight, float inValue);
+	Item(string description);
 	string getShortDescription();
-    string getLongDescription();
+	string getLongDescription();
 	int getWeight();
 	void setWeight(int weightGrams);
 	float getValue();
 	void setValue(float value);
-	int getWeaponCheck();
-	void setWeaponCheck(int weaponCheck);
 };
 
 #endif /*ITEM_H_*/
