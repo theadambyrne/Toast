@@ -165,15 +165,18 @@ void MainWindow::on_mapButton_clicked()
 inline void MainWindow::updateRoomItems()
 {
     for (Item &item : game.currentRoom->items()) {
-        QPushButton *btn = new QPushButton(QString::fromStdString(item.getShortDescription()));
+        std::string name = item.getShortDescription();
+
+        QPushButton *btn = new QPushButton(QString::fromStdString(name));
         btn->setParent(roomItemsFrame);
         roomItemsFrame->show();
 
-        connect(btn, &QPushButton::clicked, [btn, item, this]() {
-            this->game.player->addItem(((Item) item).getShortDescription());
-            this->updateRoomItems();
-            updateInventoryFrame();
+        connect(btn, &QPushButton::clicked, [btn, item, this, name]() {
+            Command *command = game.parser.getCommand("take " + name);
+            game.processCommand(*command, outputArea);
             inventoryArea->setText(game.getInventory());
+            updateRoomItems();
+            updateInventoryFrame();
             btn->deleteLater();
         });
     }
