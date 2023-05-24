@@ -10,3 +10,8 @@ string Item::getShortDescription()
 {
 	return description;
 }
+
+bool Item::operator==(const Item &other) const
+{
+    return description == other.description;
+}

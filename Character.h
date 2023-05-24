@@ -1,6 +1,8 @@
 #ifndef CHARACTER_H_
 #define CHARACTER_H_
 
+#include "item.h"
+
 #include <string>
 #include <vector>
 
@@ -11,10 +13,13 @@ private:
     string description;
 
 public:
-    void addItem(string Item);
+    void addItem(Item item);
+    void removeItem(Item item);
+
     Character(string description);
+
     string shortDescription();
-    vector<string> itemsInCharacter;
+    vector<Item> inventory;
 };
 
 #endif /*CHARACTER_H_*/

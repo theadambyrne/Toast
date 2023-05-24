@@ -12,6 +12,7 @@ private:
 public:
     Item(string description);
 	string getShortDescription();
+    bool operator==(const Item &other) const; // Add the equality comparison operator
 };
 
 #endif /*ITEM_H_*/
