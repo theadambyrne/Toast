@@ -1,9 +1,7 @@
 #include "ZorkUL.h"
 #include "Character.h"
-#include "mainwindow.h"
+#include "item.h"
 #include "puzzle.h"
-#include <iostream>
-
 ZorkUL::ZorkUL()
 {
     createRooms();
@@ -47,9 +45,6 @@ void ZorkUL::createRooms()
     running = false;
 }
 
-/**
- *  Main play routine.  Loops until end of play.
- */
 void ZorkUL::play(QTextBrowser *output)
 {
     running = true;
@@ -67,11 +62,6 @@ void ZorkUL::printMessage(QTextBrowser *output, const QString &txt)
     output->append("---");
 }
 
-/**
- * Given a command, process (that is: execute) the command.
- * If this command ends the ZorkUL game, true is returned, otherwise false is
- * returned.
- */
 bool ZorkUL::processCommand(Command command, QTextBrowser *output)
 {
         if (command.isUnknown()) {
@@ -133,19 +123,16 @@ bool ZorkUL::processCommand(Command command, QTextBrowser *output)
         }
 
         else if (commandWord.compare("put") == 0) {
-            // remove from inventory
-            auto it = std::find(inventory.begin(), inventory.end(), command.getSecondWord());
-            if (it != inventory.end()) {
-                inventory.erase(std::remove(inventory.begin(),
-                                            inventory.end(),
-                                            command.getSecondWord()),
-                                inventory.end());
+            Item _item = Item(command.getSecondWord());
+
+            if (player->hasItem(_item)) {
+                player->removeItem(_item);
                 printMessage(output,
-                             QString::number(currentRoom->isItemInRoom(command.getSecondWord())));
+                             QString::fromStdString(_item.getShortDescription() + " put in room"));
             } else {
                 printMessage(output,
-                             QString::fromStdString(command.getSecondWord()
-                                                    + " not found in inventory"));
+                             QString::fromStdString(_item.getShortDescription()
+                                                    + " is not in room "));
             }
         }
 
@@ -158,17 +145,6 @@ bool ZorkUL::processCommand(Command command, QTextBrowser *output)
             return true; /**signal to quit*/
         }
 
-        return false;
-}
-
-bool ZorkUL::hasKey(Item *key, Character *player)
-{
-        for (std::vector<std::string>::iterator t = player->itemsInCharacter.begin();
-             t != player->itemsInCharacter.end();
-             t++) {
-            if (key->getShortDescription() == *t)
-                return true;
-        }
         return false;
 }
 
@@ -200,7 +176,7 @@ string ZorkUL::goRoom(Command command)
         }
 
         if (nextRoom->locked) {
-            if (hasKey(nextRoom->key, player)) {
+            if (player->hasItem(*nextRoom->key)) {
                 currentRoom = nextRoom;
                 return "Unlocked by " + nextRoom->key->getShortDescription() + "\n"
                        + currentRoom->longDescription();
@@ -210,15 +186,4 @@ string ZorkUL::goRoom(Command command)
 
         currentRoom = nextRoom;
         return currentRoom->longDescription();
-}
-
-QString ZorkUL::getInventory()
-{
-        string result = "Inventory:";
-        for (std::vector<std::string>::iterator t = player->itemsInCharacter.begin();
-             t != player->itemsInCharacter.end();
-             t++) {
-            result.append(" " + *t);
-        }
-        return QString::fromStdString(result);
 }

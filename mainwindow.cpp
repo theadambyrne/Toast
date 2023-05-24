@@ -1,16 +1,14 @@
 #include "mainwindow.h"
-#include <QString>
 #include <QTimer>
 #include <QtWidgets>
 #include "./ui_mainwindow.h"
 #include "QtWidgets/qtextbrowser.h"
 #include "Room.h"
 #include "ZorkUL.h"
-#include <algorithm>
-#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     this->setWindowTitle("Toast");
@@ -40,9 +38,9 @@ MainWindow::MainWindow(QWidget *parent)
         "<br/><br/><h4>Type <u>start</u> to embark on your adventure.</h4>"
         "</p>");
 
-    connect(commandArea, &QLineEdit::returnPressed, this, &MainWindow::handleInput);
 
     ZorkUL game;
+    timer = new QTimer(this);
 
     inventoryArea = findChild<QLabel *>("inventoryLabel");
     mapButton = findChild<QPushButton *>("mapButton");
@@ -51,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
     goWestButton = findChild<QPushButton *>("goWestButton");
     goSouthButton = findChild<QPushButton *>("goSouthButton");
     startButton = findChild<QPushButton *>("startButton");
+    progress = findChild<QProgressBar *>("progressBar");
 
     inventoryArea->hide();
     mapButton->hide();
@@ -58,9 +57,7 @@ MainWindow::MainWindow(QWidget *parent)
     goEastButton->hide();
     goWestButton->hide();
     goSouthButton->hide();
-    timer = new QTimer(this);
     timeLimit = 60;
-    progress = findChild<QProgressBar *>("progressBar");
     progress->setRange(0, timeLimit);
     progress->setValue(0);
     progress->setStyleSheet("QProgressBar::chunk {background-color: #ff4757;}");
@@ -70,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent)
     itemsFrameLabel->hide();
     roomItemsFrameLabel->hide();
 
+    connect(commandArea, &QLineEdit::returnPressed, this, &MainWindow::handleInput);
     connect(timer, &QTimer::timeout, this, &MainWindow::onTimerTimeout);
 }
 
@@ -87,8 +85,6 @@ void MainWindow::handleInput()
         commandArea->clear();
         commandArea->setFocus();
     }
-    updateInventoryFrame();
-    updateRoomItems();
 }
 
 void MainWindow::onTimerTimeout()
@@ -126,11 +122,9 @@ void MainWindow::processInput(QString &inputText)
     } else if (game.running) {
         Command *command = game.parser.getCommand(inputText.toStdString());
         game.processCommand(*command, outputArea);
-        inventoryArea->setText(game.getInventory());
-
-        updateRoomItems();
+        inventoryArea->setText(game.player->getInventoryDescription());
         updateInventoryFrame();
-
+        updateRoomItems();
         delete command;
     }
 }
@@ -165,78 +159,73 @@ void MainWindow::on_mapButton_clicked()
 inline void MainWindow::updateRoomItems()
 {
     for (Item &item : game.currentRoom->items()) {
-        std::string name = item.getShortDescription();
+        if (!game.player->hasItem(item)) {
+            std::string name = item.getShortDescription();
 
-        QPushButton *btn = new QPushButton(QString::fromStdString(name));
-        btn->setParent(roomItemsFrame);
-        roomItemsFrame->show();
+            QPushButton *btn = new QPushButton(QString::fromStdString(name));
+            btn->setParent(roomItemsFrame);
+            btn->show();
 
-        connect(btn, &QPushButton::clicked, [btn, item, this, name]() {
-            Command *command = game.parser.getCommand("take " + name);
-            game.processCommand(*command, outputArea);
-            inventoryArea->setText(game.getInventory());
-            updateRoomItems();
-            updateInventoryFrame();
-            btn->deleteLater();
-        });
+            connect(btn, &QPushButton::clicked, [name, this, btn]() {
+                QString cmd = QString::fromStdString("take " + name);
+                processInput(cmd);
+                btn->deleteLater();
+            });
+        }
     }
+    roomItemsFrame->show();
 }
 
 inline void MainWindow::updateInventoryFrame()
 {
-    for (const std::string &str : game.player->itemsInCharacter) {
-        QPushButton *btn = new QPushButton(QString::fromStdString(str));
+    for (Item &item : game.player->getInventory()) {
+        std::string name = item.getShortDescription();
+        QPushButton *btn = new QPushButton(QString::fromStdString(name));
         btn->setParent(itemsFrame);
-        itemsFrame->show();
-        connect(btn, &QPushButton::clicked, [btn, this, str]() {
-            game.player->itemsInCharacter.erase(std::remove(game.player->itemsInCharacter.begin(),
-                                                            game.player->itemsInCharacter.end(),
-                                                            str),
-                                                game.player->itemsInCharacter.end());
-            inventoryArea->setText(game.getInventory());
-            updateRoomItems();
-            updateInventoryFrame();
+        btn->show();
+
+        connect(btn, &QPushButton::clicked, [name, this, btn]() {
+            QString cmd = QString::fromStdString("put " + name);
+            processInput(cmd);
             btn->deleteLater();
         });
     }
+    itemsFrame->show();
 }
 
 void MainWindow::on_goNorthButton_clicked()
 {
-    game.processCommand(*game.parser.getCommand("go north"), outputArea);
-    updateRoomItems();
-    updateInventoryFrame();
+    QString cmd = "go north";
+    processInput(cmd);
 }
 
 void MainWindow::on_goSouthButton_clicked()
 {
-    game.processCommand(*game.parser.getCommand("go south"), outputArea);
-    updateRoomItems();
-    updateInventoryFrame();
+    QString cmd = "go south";
+    processInput(cmd);
 }
 
 void MainWindow::on_goWestButton_clicked()
 {
-    game.processCommand(*game.parser.getCommand("go west"), outputArea);
-    updateRoomItems();
-    updateInventoryFrame();
+    QString cmd = "go west";
+    processInput(cmd);
 }
 
 void MainWindow::on_goEastButton_clicked()
 {
-    game.processCommand(*game.parser.getCommand("go east"), outputArea);
-    updateInventoryFrame();
-    updateRoomItems();
+    QString cmd = "go east";
+    processInput(cmd);
 }
 
 void MainWindow::on_startButton_clicked()
 {
-    if (!this->game.running)
-    {
+    if (!game.running) {
         game.running = true;
         timer->start(1000);
+
         outputArea->clear();
         game.play(outputArea);
+
         inventoryArea->show();
         mapButton->show();
         goNorthButton->show();
@@ -248,6 +237,5 @@ void MainWindow::on_startButton_clicked()
         itemsFrameLabel->show();
         roomItemsFrameLabel->show();
         startButton->hide();
-        updateRoomItems();
     }
 }

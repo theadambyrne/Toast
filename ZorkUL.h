@@ -17,7 +17,6 @@ private:
     string goRoom(Command command);
     string solvePuzzle(Puzzle puzzle, Command command);
     void printMessage(QTextBrowser *output, const QString &txt);
-    vector<string> inventory;
 
 public:
     ZorkUL();
@@ -29,7 +28,6 @@ public:
     bool processCommand(Command command, QTextBrowser *output);
     QString getInventory();
     Character *player;
-    bool hasKey(Item *key, Character *player);
 };
 
 #endif /*ZORKUL_H_*/
