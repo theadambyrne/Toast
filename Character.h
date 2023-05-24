@@ -14,7 +14,6 @@ public:
     void addItem(string Item);
     Character(string description);
     string shortDescription();
-    string longDescription();
     vector<string> itemsInCharacter;
 };
 
