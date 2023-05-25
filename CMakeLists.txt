@@ -33,7 +33,14 @@ set(PROJECT_SOURCES
         Character.h
         puzzle.h
         puzzle.cpp
+        commandexception.h
+        commandexception.cpp
 )
+
+set(MACOSX_BUNDLE_ICON_FILE "icon.icns")
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/icon.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+set(MACOSX_BUNDLE_ICON_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/icon.icns")
+
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Toast

@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     roomItemsFrame = findChild<QFrame *>("roomItemsFrame");
     itemsFrameLabel = findChild<QLabel *>("inventoryFrameLabel");
     roomItemsFrameLabel = findChild<QLabel *>("roomItemsFrameLabel");
+    timerText = findChild<QLabel *>("timerText");
 
     outputArea->setHtml(
         "<center>"
@@ -98,7 +99,17 @@ void MainWindow::onTimerTimeout()
     else if (game.running)
     {
         progress->setValue(progress->value() + 1);
+        timerText->setText(
+            QString::fromStdString(std::to_string(timeLimit - progress->value()) + "s left"));
     }
+    //    else {
+    //        outputArea->clear();
+    //        outputArea->insertPlainText("WINNER");
+    //        outputArea->insertPlainText(" ");
+    //        outputArea->insertPlainText(
+    //            QString::fromStdString(std::to_string(timeLimit - progress->value())));
+    //        game.running = false;
+    //    }
 }
 
 void MainWindow::processInput(QString &inputText)
@@ -178,17 +189,20 @@ inline void MainWindow::updateRoomItems()
 
 inline void MainWindow::updateInventoryFrame()
 {
+    QObjectList kids = itemsFrame->children();
     for (Item &item : game.player->getInventory()) {
         std::string name = item.getShortDescription();
         QPushButton *btn = new QPushButton(QString::fromStdString(name));
-        btn->setParent(itemsFrame);
-        btn->show();
+        if (!kids.contains(btn)) {
+            btn->setParent(itemsFrame);
+            btn->show();
 
-        connect(btn, &QPushButton::clicked, [name, this, btn]() {
-            QString cmd = QString::fromStdString("put " + name);
-            processInput(cmd);
-            btn->deleteLater();
-        });
+            connect(btn, &QPushButton::clicked, [name, this, btn]() {
+                QString cmd = QString::fromStdString("put " + name);
+                processInput(cmd);
+                btn->deleteLater();
+            });
+        }
     }
     itemsFrame->show();
 }

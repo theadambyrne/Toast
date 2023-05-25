@@ -44,11 +44,3 @@ Command *Parser::getCommand(string txt)
 	else
 		return new Command("", word2);
 }
-
-/**
- * Print out a list of valid command words.
- */
-vector<string> Parser::showCommands()
-{
-    return commands->showAll();
-}

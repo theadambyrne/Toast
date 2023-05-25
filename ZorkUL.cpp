@@ -1,7 +1,9 @@
 #include "ZorkUL.h"
 #include "Character.h"
+#include "commandexception.h"
 #include "item.h"
 #include "puzzle.h"
+
 ZorkUL::ZorkUL()
 {
     createRooms();
@@ -80,7 +82,12 @@ bool ZorkUL::processCommand(Command command, QTextBrowser *output)
         }
 
         else if (commandWord.compare("try") == 0 && currentRoom->puzzle) {
-            printMessage(output, QString::fromStdString(solvePuzzle(*currentRoom->puzzle, command)));
+            try {
+                printMessage(output,
+                             QString::fromStdString(solvePuzzle(*currentRoom->puzzle, command)));
+            } catch (const CommandException &e) {
+                printMessage(output, e.what());
+            }
         }
 
         else if (commandWord.compare("map") == 0)
@@ -106,43 +113,49 @@ bool ZorkUL::processCommand(Command command, QTextBrowser *output)
                 "<br/>");
 
         else if (commandWord.compare("take") == 0) {
-            if (!command.hasSecondWord()) {
-                printMessage(output, "incomplete input");
-            } else if (command.hasSecondWord()) {
-                int location = currentRoom->isItemInRoom(command.getSecondWord());
+            try {
+                if (!command.hasSecondWord()) {
+                    throw CommandException("incomplete input");
+                } else if (command.hasSecondWord()) {
+                    int location = currentRoom->isItemInRoom(command.getSecondWord());
 
-                if (location == 0) {
+                    if (location != 0) {
+                        throw CommandException(command.getSecondWord() + " is not in room "
+                                               + currentRoom->shortDescription());
+                    }
                     player->addItem(command.getSecondWord());
-
-                } else {
-                    printMessage(output,
-                                 QString::fromStdString(command.getSecondWord() + " is not in room "
-                                                        + currentRoom->shortDescription()));
                 }
+            } catch (const CommandException &e) {
+                printMessage(output, e.what());
             }
         }
 
         else if (commandWord.compare("put") == 0) {
             Item _item = Item(command.getSecondWord());
-
-            if (player->hasItem(_item)) {
+            try {
+                if (!player->hasItem(_item)) {
+                    throw CommandException(_item.getShortDescription() + " is not in room ");
+                }
                 player->removeItem(_item);
                 printMessage(output,
                              QString::fromStdString(_item.getShortDescription() + " put in room"));
-            } else {
-                printMessage(output,
-                             QString::fromStdString(_item.getShortDescription()
-                                                    + " is not in room "));
+            } catch (const CommandException &e) {
+                printMessage(output, e.what());
             }
         }
 
         else if (commandWord.compare("quit") == 0) {
-            if (command.hasSecondWord())
-                printMessage(output, QString::fromStdString("overdefined input"));
-            else
-                printMessage(output, "Exited game");
-            this->running = false;
-            return true; /**signal to quit*/
+            try {
+                if (command.hasSecondWord())
+                    throw CommandException("overdefined input");
+                else
+                    printMessage(output, "Exited game");
+                this->running = false;
+
+                return true; /**signal to quit*/
+            } catch (const CommandException &e) {
+                printMessage(output, e.what());
+            }
         }
 
         return false;
@@ -151,7 +164,7 @@ bool ZorkUL::processCommand(Command command, QTextBrowser *output)
 string ZorkUL::solvePuzzle(Puzzle puzzle, Command command)
 {
         if (!command.hasSecondWord()) {
-            return "incomplete input";
+            throw CommandException("incomplete input");
         }
 
         string option = command.getSecondWord();

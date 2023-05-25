@@ -55,6 +55,7 @@ private:
     QPushButton *startButton;
     QLabel *itemsFrameLabel;
     QLabel *roomItemsFrameLabel;
+    QLabel *timerText;
     ZorkUL game;
     QTimer *timer;
     int timeLimit;

@@ -257,6 +257,19 @@ padding-left:15px;
      <number>24</number>
     </property>
    </widget>
+   <widget class="QLabel" name="timerText">
+    <property name="geometry">
+     <rect>
+      <x>980</x>
+      <y>380</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
