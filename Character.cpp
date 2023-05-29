@@ -1,11 +1,6 @@
 #include "Character.h"
 #include <string>
 
-Character::Character(string description)
-{
-    this->description = description;
-}
-
 void Character::addItem(Item item)
 {
     inventory.push_back(item);
@@ -38,4 +33,9 @@ QString Character::getInventoryDescription()
         result.append(" " + QString::fromStdString(item.getShortDescription()));
     }
     return result;
+}
+
+string Character::getShortDescription() const
+{
+    return description;
 }

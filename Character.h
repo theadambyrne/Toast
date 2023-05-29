@@ -1,6 +1,7 @@
 #ifndef CHARACTER_H_
 #define CHARACTER_H_
 
+#include "GameObject.h"
 #include "item.h"
 
 #include <QString>
@@ -9,19 +10,19 @@
 
 using namespace std;
 
-class Character {
+class Character : public GameObject
+{
 private:
-    string description;
     vector<Item> inventory;
 
 public:
+    Character(string description) { this->description = description; };
+    string getShortDescription() const override;
+
     void addItem(Item item);
     void removeItem(Item item);
-
-    Character(string description);
-
-    string shortDescription();
     bool hasItem(Item item);
+
     vector<Item> getInventory();
     QString getInventoryDescription();
 };

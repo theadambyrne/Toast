@@ -2,13 +2,9 @@
 
 using namespace std;
 
-Item::Item(string inDescription) {
-	description = inDescription;
-}
-
-string Item::getShortDescription()
+string Item::getShortDescription() const
 {
-	return description;
+    return description;
 }
 
 bool Item::operator==(const Item &other) const

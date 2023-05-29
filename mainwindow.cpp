@@ -6,6 +6,16 @@
 #include "Room.h"
 #include "ZorkUL.h"
 
+QString intro
+    = "<center>"
+      "<h1>Toast!</h1>"
+      "<p>A Zork inspired text-adventure game with GUI controls.</p></center><hr/><br/>"
+      "<p>While making your toast this morning, you have been shrunk down and trapped inside the "
+      "toaster.<br/>Escape before your toast pops or you're toast!<br/>"
+      "<i>by Adam Byrne</i>"
+      "<br/><br/><h4>Type <u>start</u> to embark on your adventure.</h4>"
+      "</p>";
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -23,22 +33,13 @@ MainWindow::MainWindow(QWidget *parent)
     commandArea->setPlaceholderText("Enter commands here ...");
     commandArea->setFocus();
 
-    itemsFrame = findChild<QFrame *>("itemsFrame"); // inventory
+    itemsFrame = findChild<QFrame *>("itemsFrame");
     roomItemsFrame = findChild<QFrame *>("roomItemsFrame");
     itemsFrameLabel = findChild<QLabel *>("inventoryFrameLabel");
     roomItemsFrameLabel = findChild<QLabel *>("roomItemsFrameLabel");
     timerText = findChild<QLabel *>("timerText");
 
-    outputArea->setHtml(
-        "<center>"
-        "<h1>Toast!</h1>"
-        "<p>A Zork inspired text-adventure game with GUI controls.</p></center><hr/><br/>"
-        "<p>While making your toast this morning, you have been shrunk down and trapped inside the "
-        "toaster.<br/>Escape before your toast pops or you're toast!<br/>"
-        "<i>by Adam Byrne</i>"
-        "<br/><br/><h4>Type <u>start</u> to embark on your adventure.</h4>"
-        "</p>");
-
+    outputArea->setHtml(intro);
 
     ZorkUL game;
     timer = new QTimer(this);
@@ -102,14 +103,6 @@ void MainWindow::onTimerTimeout()
         timerText->setText(
             QString::fromStdString(std::to_string(timeLimit - progress->value()) + "s left"));
     }
-    //    else {
-    //        outputArea->clear();
-    //        outputArea->insertPlainText("WINNER");
-    //        outputArea->insertPlainText(" ");
-    //        outputArea->insertPlainText(
-    //            QString::fromStdString(std::to_string(timeLimit - progress->value())));
-    //        game.running = false;
-    //    }
 }
 
 void MainWindow::processInput(QString &inputText)

@@ -35,6 +35,7 @@ set(PROJECT_SOURCES
         puzzle.cpp
         commandexception.h
         commandexception.cpp
+        GameObject.h
 )
 
 set(MACOSX_BUNDLE_ICON_FILE "icon.icns")
