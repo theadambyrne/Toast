@@ -6,29 +6,33 @@
 #include <map>
 #include <string>
 #include <vector>
+
 using namespace std;
-using std::vector;
 
-class Room {
-
+class Room
+{
 private:
-	string description;
-	map<string, Room*> exits;
-	string exitString();
+    string description;
+    string exitString();
+
+    map<string, Room *> exits;
     vector <Item> itemsInRoom;
 
 
 public:
+    Room(string description);
+    string shortDescription();
+    string longDescription();
+
     int numberOfItems();
     vector<Item> items();
-    Room(string description);
-    void setExits(Room *north, Room *east, Room *south, Room *west);
-	string shortDescription();
-	string longDescription();
-	Room* nextRoom(string direction);
     void addItem(Item *inItem);
     string displayItem();
     int isItemInRoom(string inString);
+
+    Room *nextRoom(string direction);
+    void setExits(Room *north, Room *east, Room *south, Room *west);
+
     bool locked = false;
     string hint;
     Item *key;

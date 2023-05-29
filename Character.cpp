@@ -18,6 +18,7 @@ void Character::removeItem(Item item)
 bool Character::hasItem(Item item)
 {
     auto it = std::find(inventory.begin(), inventory.end(), item);
+
     return it != inventory.end();
 }
 

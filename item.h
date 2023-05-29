@@ -10,7 +10,7 @@ class Item : public GameObject
 {
 public:
     Item(string description) { this->description = description; };
-    bool operator==(const Item &other) const; // Add the equality comparison operator
+    bool operator==(const Item &other) const;
     string getShortDescription() const override;
 };
 
