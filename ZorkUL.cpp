@@ -171,6 +171,7 @@ string ZorkUL::solvePuzzle(Puzzle puzzle, Command command)
 
         if (puzzle.checkSolution(option)) {
             this->running = false;
+            this->won = true;
             return "🏆 WINNER";
         }
         return "Uh oh wrong answer!";

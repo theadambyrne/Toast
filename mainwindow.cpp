@@ -91,17 +91,25 @@ void MainWindow::handleInput()
 
 void MainWindow::onTimerTimeout()
 {
-    if (progress->value() > 59 && game.running)
-    {
+    if (progress->value() > timeLimit - 1 && game.running) {
         outputArea->clear();
-        outputArea->insertPlainText("Game Over");
+        outputArea->insertPlainText("You're TOAST!");
+        outputArea->append("");
+        outputArea->append("");
+        outputArea->insertPlainText("GAME OVER");
+
         game.running = false;
-    }
-    else if (game.running)
-    {
+    } else if (game.running) {
         progress->setValue(progress->value() + 1);
         timerText->setText(
             QString::fromStdString(std::to_string(timeLimit - progress->value()) + "s left"));
+    } else if (game.won) {
+        outputArea->append("");
+        outputArea->insertPlainText("Score: ");
+        outputArea->insertPlainText(std::to_string(timeLimit - progress->value()).c_str());
+        outputArea->insertPlainText(" seconds left.");
+        outputArea->append("");
+        delete timer;
     }
 }
 

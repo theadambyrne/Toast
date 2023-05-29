@@ -21,6 +21,7 @@ private:
 public:
     ZorkUL();
     Room *currentRoom;
+    bool won = false;
 
     Parser parser;
     bool running;
