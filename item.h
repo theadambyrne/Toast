@@ -6,7 +6,7 @@
 #include <string>
 using namespace std;
 
-class Item : public GameObject
+class Item : public GameObject<string>
 {
 public:
     Item(string description) { this->description = description; };

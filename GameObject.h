@@ -1,16 +1,14 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include <string>
-using namespace std;
-
+template<typename T>
 class GameObject
 {
 public:
-    virtual string getShortDescription() const = 0;
+    virtual T getShortDescription() const = 0;
 
 protected:
-    string description;
+    T description;
 };
 
 #endif // GAMEOBJECT_H

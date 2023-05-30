@@ -7,6 +7,7 @@
 #include <QProgressBar>
 #include <QPushButton>
 #include <QTextBrowser>
+#include "GameWindow.h"
 #include "ZorkUL.h"
 
 QT_BEGIN_NAMESPACE
@@ -16,7 +17,7 @@ namespace Ui
 }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, public GameWindow
 {
     Q_OBJECT
 

@@ -10,7 +10,7 @@
 
 using namespace std;
 
-class Character : public GameObject
+class Character : public GameObject<string>
 {
 private:
     vector<Item> inventory;

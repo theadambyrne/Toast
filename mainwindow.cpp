@@ -2,19 +2,12 @@
 #include <QTimer>
 #include <QtWidgets>
 #include "./ui_mainwindow.h"
+#include "GameWindow.h"
 #include "QtWidgets/qtextbrowser.h"
 #include "Room.h"
 #include "ZorkUL.h"
 
-QString intro
-    = "<center>"
-      "<h1>Toast!</h1>"
-      "<p>A Zork inspired text-adventure game with GUI controls.</p></center><hr/><br/>"
-      "<p>While making your toast this morning, you have been shrunk down and trapped inside the "
-      "toaster.<br/>Escape before your toast pops or you're toast!<br/>"
-      "<i>by Adam Byrne</i>"
-      "<br/><br/><h4>Type <u>start</u> to embark on your adventure.</h4>"
-      "</p>";
+#define TIME_LIMIT 60
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -59,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
     goEastButton->hide();
     goWestButton->hide();
     goSouthButton->hide();
-    timeLimit = 60;
+    timeLimit = TIME_LIMIT;
     progress->setRange(0, timeLimit);
     progress->setValue(0);
     progress->setStyleSheet("QProgressBar::chunk {background-color: #ff4757;}");
